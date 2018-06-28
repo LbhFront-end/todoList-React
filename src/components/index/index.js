@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import { sortBy } from 'lodash';
 import { Modal, Toast } from 'antd-mobile'
 import './index.css'
 // 时间
@@ -19,21 +20,25 @@ function formatDate(item) {
     // 得到hours
     const Hours = (day, hours) => hours = (hours < 12 ? (day + '早上') : ((hours > 12 && hours < 17) ? (day + '下午') : (day + '下午'))) + (hours < 12 ? pad(hours) : pad(hours - 12));
     if (nowDate.toDateString() === new Date(date).toDateString()) {
-        return `${Hours('今天 ',hours)}:${pad(minutes)}`;
+        return `${Hours('今天 ', hours)}:${pad(minutes)}`;
     } else if (
         new Date(tomorrow).toDateString() === new Date().toDateString()
     ) {
-        return `${Hours('明天 ',hours)}:${pad(minutes)}`;
+        return `${Hours('明天 ', hours)}:${pad(minutes)}`;
     } else if (
         new Date(yesterday).toDateString() === new Date().toDateString()
     ) {
-        return `${Hours('昨天 ',hours)}:${pad(minutes)}`;
+        return `${Hours('昨天 ', hours)}:${pad(minutes)}`;
     } else {
         const dateStr = `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())}`;
         const timeStr = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
         return `${dateStr} ${timeStr}`
     }
 
+}
+//排序
+const SORTS = {
+    Status: list => sortBy(list, 'status')
 }
 class Index extends Component {
     constructor(props) {
@@ -42,6 +47,7 @@ class Index extends Component {
             optionsValue: '',
             total: '',
             List: '',
+            sortKey: 'Status',
         }
         this.onSelectChange = this.onSelectChange.bind(this);
         this.DeleteSingle = this.DeleteSingle.bind(this);
@@ -86,7 +92,12 @@ class Index extends Component {
     }
     //删除某个备忘录
     DeleteSingle(id) {
-
+        const { List } = this.state;
+        const updatedList = List.filter(item => item.id !== id);
+        this.setState({ List: updatedList });
+        var a = JSON.stringify(updatedList);
+        localStorage.setItem("List", a);
+        Toast.info('删除成功', 1.5);
     }
     // 删除所有备忘录
     onDeleteAll() {
@@ -125,7 +136,7 @@ class Index extends Component {
         this.getBorderClass();
     }
     render() {
-        const { optionsValue, total, List } = this.state;
+        const { optionsValue, total, List, sortKey } = this.state;
         return (
             <div className="index flex-col flex-x-center flex-y-center">
                 {/* 筛选 */}
@@ -133,7 +144,7 @@ class Index extends Component {
                 {/* 标题 */}
                 <Title />
                 {/* 列表集 */}
-                <Lists List={List} DeleteSingle={this.DeleteSingle} />
+                <Lists List={List} DeleteSingle={this.DeleteSingle} sortKey={sortKey} />
                 {/* 底部功能键 */}
                 <BottomFunction onClick={this.onDeleteAll} total={total} />
             </div >
@@ -166,10 +177,10 @@ const Title = ({ }) => <div className="title flex-left flex-col flex-y-center">
     <p>待办事件</p>
 </div>
 //列表集
-const Lists = ({ List, DeleteSingle }) => <div className="lists flex-col flex-x-center flex-y-center">
+const Lists = ({ List, DeleteSingle, sortKey }) => <div className="lists flex-col flex-x-center flex-y-center">
     {/* 单个列表 */}
     {
-        List ? List.map(item =>
+        List ? SORTS[sortKey](List).map(item =>
             //  列表Border
             <li className={"list-border flex-col flex-x-center flex-y-center " + (item.status == 0 ? '' : ((item.status == 1) ? 'finishT' : 'overT'))} key={item.id}>
                 <div className="list flex-col flex-x-center flex-y-center">
@@ -193,7 +204,10 @@ const Lists = ({ List, DeleteSingle }) => <div className="lists flex-col flex-x-
                                     <img src="../../images/add.png" />
                                 </Link>
                             </div>
-                            <div className="delect" onClick={() => DeleteSingle(item.id)}>
+                            <div className="delect" onClick={() => alert('此操作会删除该条备忘录', '您确定吗???', [
+                                { text: '取消', onPress: () => console.log('cancel') },
+                                { text: '删除', onPress: () => DeleteSingle(item.id) },
+                            ])}>
                                 <img src="../../images/c-delete .png" />
                             </div>
                         </div>
