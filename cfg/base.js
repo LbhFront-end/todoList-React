@@ -1,6 +1,8 @@
 'use strict';
 let path = require('path');
 let defaultSettings = require('./defaults');
+const px2rem = require('postcss-px2rem')
+const autoprefixer = require('autoprefixer');
 
 // Additional npm or bower modules to include in builds
 // Add all foreign plugins you may need into this array
@@ -39,5 +41,24 @@ module.exports = {
       'react/lib/ReactMount': 'react-dom/lib/ReactMount'
     }
   },
-  module: {}
+  module: {
+    rules: [{
+      test: /\.css$/,
+      use: [{
+        loader: 'style-loader'
+      }, {
+        loader: 'css-loader'
+      }, {
+        loader: 'px2rem-loader',
+        // options here
+        options: {
+          remUni: 75,
+          remPrecision: 8
+        }
+      }]
+    }]
+  },
+  postcss: [autoprefixer({
+    browsers: ['last 2 versions']
+  })]
 };

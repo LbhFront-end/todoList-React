@@ -1,15 +1,20 @@
 import '../styles/App.css';
 
-import React from 'react';
-import {Index} from '../components/index/index.js'
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route} from 'react-router-dom'
+import Index from '../components/Index/index.js'
+import AddList from '../components/addList/index.js';
 
-class AppComponent extends React.Component {
+class AppComponent extends Component {
   render() {
     return (
-      <div className="main">
-        <Index/>
-      </div>
-    );
+      <Router>
+        <div className="main">
+          <Route exact path="/" component={Index} />
+          <Route path="/AddList" component={AddList} />
+        </div>
+      </Router>
+    )
   }
 }
 
