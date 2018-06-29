@@ -22,6 +22,7 @@ class AddList extends Component {
             textarea: '',
             count: 0,
             date: now,
+            name: '添加',
             status: 0
         }
         this.onTitleChange = this.onTitleChange.bind(this);
@@ -73,7 +74,7 @@ class AddList extends Component {
                 oldStorage.push(newDate);
                 var a = JSON.stringify(oldStorage);
                 localStorage.setItem("List", a);
-                console.log('1' + a);
+                // console.log('1' + a);
                 self.context.router.history.push(`/`);
             } else {
                 var stroage = [];
@@ -85,11 +86,11 @@ class AddList extends Component {
         }
     }
     render() {
-        const { title, textarea, count, date } = this.state;
+        const { title, textarea, count, date,name } = this.state;
         return (
             <div className="addList flex-col flex-x-center flex-y-center">
                 {/* 头部  */}
-                <BackAdd onClick={this.AddListItem} />
+                <BackAdd onClick={this.AddListItem} name ={name} />
                 {/* 标题  */}
                 <Title value={title} onChange={this.onTitleChange} />
                 {/* 内容 */}
@@ -102,7 +103,7 @@ class AddList extends Component {
 }
 
 // 头部
-const BackAdd = ({ onClick }) => <div className="headPosition flex-row flex-space-between flex-y-center">
+const BackAdd = ({ onClick,name }) => <div className="headPosition flex-row flex-space-between flex-y-center">
     {/* 左边icon与字  */}
     <div className="left flex-row flex-x-center flex-y-center">
         <div className="leftBack-icon flex-row flex-x-center flex-y-center">
@@ -116,7 +117,7 @@ const BackAdd = ({ onClick }) => <div className="headPosition flex-row flex-spac
     </div>
     {/* add添加 */}
     <div className="right flex-row flex-x-center flex-y-center">
-        <p onClick={onClick}>添加</p>
+        <p onClick={onClick}>{name}</p>
     </div>
 </div>
 // 标题

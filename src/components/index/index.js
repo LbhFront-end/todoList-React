@@ -10,15 +10,16 @@ const alert = Modal.alert;
 //时间格式化
 function formatDate(item) {
     const date = new Date(item);
-    //判断是不是最近两天的时间
-    const tomorrow = date.setTime(date.getTime() - 24 * 60 * 60 * 1000);
-    const yesterday = date.setTime(date.getTime() + 24 * 60 * 60 * 1000);
-    //小于10 加 0 
+    var tomorrow = new Date(item);
+    var yesterday = new Date(item);
+    tomorrow.setTime(date.getTime() - 24 * 60 * 60 * 1000);
+    yesterday.setTime(date.getTime() + 24 * 60 * 60 * 1000);
+    //小于10 加 0
     const pad = n => n < 10 ? `0${n}` : n;
     var hours = date.getHours(); //小时
     var minutes = date.getMinutes(); //分
     // 得到hours
-    const Hours = (day, hours) => hours = (hours < 12 ? (day + '早上') : ((hours > 12 && hours < 17) ? (day + '下午') : (day + '下午'))) + (hours < 12 ? pad(hours) : pad(hours - 12));
+    const Hours = (day, hours) => hours = (hours < 12 ? (day + '早上') : ((hours > 12 && hours < 17) ? (day + '中午') : (day + '下午'))) + (hours < 12 ? pad(hours) : pad(hours - 12));
     if (nowDate.toDateString() === new Date(date).toDateString()) {
         return `${Hours('今天 ', hours)}:${pad(minutes)}`;
     } else if (
@@ -34,20 +35,20 @@ function formatDate(item) {
         const timeStr = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
         return `${dateStr} ${timeStr}`
     }
-
 }
 //排序
 const SORTS = {
     Status: list => sortBy(list, 'status')
 }
+
 class Index extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            optionsValue: '',
+            optionsValue: '0',
             total: '',
             List: '',
-            sortKey: 'Status',
+            sortKey: 'Status'
         }
         this.onSelectChange = this.onSelectChange.bind(this);
         this.DeleteSingle = this.DeleteSingle.bind(this);
@@ -88,13 +89,27 @@ class Index extends Component {
     }
     // 多选框改变
     onSelectChange(event) {
-        this.setState({ optionsValue: event.target.value });
+        let getList = localStorage.getItem("List");
+        var OldList = JSON.parse(getList);
+        const tempList = OldList;
+        const NewList = OldList;
+        if (OldList.length == 0) {
+            Toast.info('您还没有备忘录哦，去添加吧', 1.5);
+        } else if (event.target.value == 0) {
+            this.setState({ optionsValue: event.target.value, List: tempList });
+        } else  if(event.target.value == 2){
+            let newList = NewList.filter(item => item.status == 0);
+            this.setState({ optionsValue: event.target.value, List: newList });
+        }else{
+            let newList = NewList.filter(item => item.status == 1);
+            this.setState({ optionsValue: event.target.value, List: newList });
+        }
     }
     //删除某个备忘录
     DeleteSingle(id) {
         const { List } = this.state;
         const updatedList = List.filter(item => item.id !== id);
-        this.setState({ List: updatedList });
+        this.setState({ List: updatedList , total: updatedList.length});
         var a = JSON.stringify(updatedList);
         localStorage.setItem("List", a);
         Toast.info('删除成功', 1.5);
@@ -121,7 +136,7 @@ class Index extends Component {
             if (v.status == 0) {
                 if (judge > 0) {
                     v.status = 2;
-                    console.log(v + '序号：' + i);
+                    // console.log(v.title + '序号：' + i);
                 }
             }
         });
@@ -200,7 +215,7 @@ const Lists = ({ List, DeleteSingle, sortKey }) => <div className="lists flex-co
                         </div>
                         <div className="edit-delect flex-row flex-space-between flex-y-center">
                             <div className="edit">
-                                <Link to="'/changeList?id='+item.id">
+                                <Link to={`/ChangeList/${item.id}`}>
                                     <img src="../../images/add.png" />
                                 </Link>
                             </div>
@@ -215,7 +230,7 @@ const Lists = ({ List, DeleteSingle, sortKey }) => <div className="lists flex-co
                 </div>
             </li>
         ) : <div className="tip flex-col flex-x-center flex-y-center">
-                <p>您暂时还没有备忘录哦,快点击右下角添加吧</p>
+                <p>您暂时还没有备忘录哦,快添加吧</p>
             </div>
     }
 </div>
@@ -230,7 +245,7 @@ const BottomFunction = ({ total, onClick }) => <div className="bottomFunction fl
         <img src="../../images/classify.png" />
     </div>
     <div className="note">
-        <p>总共 {total} 个备忘录</p>
+        <p>总共 {total|| 0} 个备忘录</p>
     </div>
     <div className="f2">
         <Link to={`/AddList`}>
