@@ -182,10 +182,10 @@ const BottomFunction = ({ deleteItem, finishItem }) => <div className="bottomFun
             { text: '取消', onPress: () => console.log('cancel') },
             { text: '删除', onPress: () => deleteItem() },
         ])}>
-        <img src="../../images/c-delete .png" />
+        <img src={require('../../images/c-delete .png')} />
     </div>
     <div className="f2" onClick={finishItem}>
-        <img src="../../images/finish.png" />
+        <img src={require('../../images/finish.png')}/>
     </div>
 </div>
 export default ChangeList;

@@ -177,7 +177,7 @@ const Select = ({ value, onChange }) => <div className="choice flex-space-betwee
         </select>
         <div className="icon-select flex-x-center flex-y-center flex-row">
             <label htmlFor="all flex-x-center flex-y-center flex-row">
-                <img src="../../images/select.png" />
+                <img src={require('../../images/select.png')}/>
             </label>
         </div>
     </div>
@@ -216,14 +216,14 @@ const Lists = ({ List, DeleteSingle, sortKey }) => <div className="lists flex-co
                         <div className="edit-delect flex-row flex-space-between flex-y-center">
                             <div className="edit">
                                 <Link to={`/ChangeList/${item.id}`}>
-                                    <img src="../../images/add.png" />
+                                    <img src={require('../../images/add.png')}/>
                                 </Link>
                             </div>
                             <div className="delect" onClick={() => alert('此操作会删除该条备忘录', '您确定吗???', [
                                 { text: '取消', onPress: () => console.log('cancel') },
                                 { text: '删除', onPress: () => DeleteSingle(item.id) },
                             ])}>
-                                <img src="../../images/c-delete .png" />
+                                <img src={require('../../images/c-delete .png')} />
                             </div>
                         </div>
                     </div>
@@ -242,14 +242,14 @@ const BottomFunction = ({ total, onClick }) => <div className="bottomFunction fl
             { text: '删除', onPress: () => onClick() },
         ])
     }>
-        <img src="../../images/classify.png" />
+        <img src={require('../../images/classify.png')} />
     </div>
     <div className="note">
         <p>总共 {total|| 0} 个备忘录</p>
     </div>
     <div className="f2">
         <Link to={`/AddList`}>
-            <img src="../../images/add.png" />
+            <img src={require('../../images/add.png')}/>
         </Link>
     </div>
 </div>

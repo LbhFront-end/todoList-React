@@ -108,7 +108,7 @@ const BackAdd = ({ onClick,name }) => <div className="headPosition flex-row flex
     <div className="left flex-row flex-x-center flex-y-center">
         <div className="leftBack-icon flex-row flex-x-center flex-y-center">
             <Link to={`/`} className="flex-row flex-x-center flex-y-center">
-                <img src="../../images/back.png" />
+                <img src={require('../../images/back.png')}/>
             </Link>
         </div>
         <div className="leftBack-text flex-row flex-x-center flex-y-center">
