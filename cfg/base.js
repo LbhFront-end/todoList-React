@@ -1,7 +1,6 @@
 'use strict';
 let path = require('path');
 let defaultSettings = require('./defaults');
-const px2rem = require('postcss-px2rem')
 const autoprefixer = require('autoprefixer');
 
 // Additional npm or bower modules to include in builds
@@ -10,6 +9,7 @@ const autoprefixer = require('autoprefixer');
 // let npmBase = path.join(__dirname, '../node_modules');
 // let additionalPaths = [ path.join(npmBase, 'react-bootstrap') ];
 let additionalPaths = [];
+
 
 module.exports = {
   additionalPaths: additionalPaths,
@@ -21,6 +21,9 @@ module.exports = {
     filename: 'app.js',
     publicPath: defaultSettings.publicPath
   },
+  plugins: [
+
+  ],
   devServer: {
     contentBase: './src/',
     historyApiFallback: true,
@@ -40,23 +43,6 @@ module.exports = {
       config: `${defaultSettings.srcPath}/config/` + process.env.REACT_WEBPACK_ENV,
       'react/lib/ReactMount': 'react-dom/lib/ReactMount'
     }
-  },
-  module: {
-    rules: [{
-      test: /\.css$/,
-      use: [{
-        loader: 'style-loader'
-      }, {
-        loader: 'css-loader'
-      }, {
-        loader: 'px2rem-loader',
-        // options here
-        options: {
-          remUni: 75,
-          remPrecision: 8
-        }
-      }]
-    }]
   },
   postcss: [autoprefixer({
     browsers: ['last 2 versions']
